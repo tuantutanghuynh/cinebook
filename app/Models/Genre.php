@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Genre Model
+ *
+ * Represents a movie genre category.
+ * Supports many-to-many relationship with movies.
+ */
 class Genre extends Model
 {
     use HasFactory;

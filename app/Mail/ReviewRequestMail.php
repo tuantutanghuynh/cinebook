@@ -9,6 +9,12 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Booking;
 
+/**
+ * ReviewRequestMail
+ *
+ * Email sent to customers after watching a movie.
+ * Invites them to leave a review for the movie they watched.
+ */
 class ReviewRequestMail extends Mailable
 {
     use Queueable, SerializesModels;

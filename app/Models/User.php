@@ -9,6 +9,13 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\Booking;
 use App\Models\Review;
 
+/**
+ * User Model
+ *
+ * Represents a user in the cinema booking system.
+ * Handles user authentication, profile management, and booking history.
+ * Supports multiple roles: admin, user, guest.
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */

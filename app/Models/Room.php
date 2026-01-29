@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Room Model
+ *
+ * Represents a cinema screening room.
+ * Manages room layout, seat configuration, and screen type.
+ */
 class Room extends Model
 {
     use HasFactory;

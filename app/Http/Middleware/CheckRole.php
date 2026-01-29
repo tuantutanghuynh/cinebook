@@ -6,6 +6,12 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * CheckRole Middleware
+ *
+ * Verifies user has required role to access protected routes.
+ * Used for admin panel access control.
+ */
 class CheckRole
 {
     /**

@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * BookingSeat Model
+ *
+ * Represents an individual seat within a booking.
+ * Contains QR code for check-in and seat pricing.
+ */
 class BookingSeat extends Model
 {
     use HasFactory;

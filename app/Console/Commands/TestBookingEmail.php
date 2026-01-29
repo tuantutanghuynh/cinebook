@@ -7,6 +7,13 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\BookingConfirmationMail;
 use App\Models\Booking;
 
+/**
+ * TestBookingEmail Command
+ *
+ * Artisan command to test booking confirmation email.
+ * Sends a test email for a specific booking.
+ * Usage: php artisan email:test-booking {booking_id}
+ */
 class TestBookingEmail extends Command
 {
     protected $signature = 'email:test-booking {booking_id}';

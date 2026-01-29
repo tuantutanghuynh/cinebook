@@ -1,9 +1,17 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Review Model
+ *
+ * Represents a user's review for a movie.
+ * Contains rating (1-5 stars) and optional comment.
+ * Supports helpful voting system.
+ */
 class Review extends Model
 {
     use HasFactory;

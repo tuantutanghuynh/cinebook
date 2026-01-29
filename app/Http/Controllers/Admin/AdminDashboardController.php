@@ -31,7 +31,7 @@ class AdminDashboardController extends Controller
         // ROW 1: BUSINESS PULSE
         // ========================================
 
-        // Tickets Sold Today - vé đã bán cho các suất chiếu đã kết thúc hôm nay
+        // Tickets Sold Today - tickets sold for showtimes that have ended today
         $ticketsSoldToday = DB::table('booking_seats')
             ->join('bookings', 'booking_seats.booking_id', '=', 'bookings.id')
             ->join('showtimes', 'bookings.showtime_id', '=', 'showtimes.id')
@@ -41,7 +41,7 @@ class AdminDashboardController extends Controller
             ->where('bookings.payment_status', 'paid')
             ->count();
 
-        // Revenue Today - doanh thu từ các suất chiếu đã KẾT THÚC hôm nay (100% chắc chắn)
+        // Revenue Today - revenue from showtimes that have ENDED today (100% confirmed)
         $revenueToday = Booking::where('payment_status', 'paid')
             ->whereHas('showtime', function ($query) use ($today, $now) {
                 $query->whereDate('show_date', $today)
@@ -51,7 +51,7 @@ class AdminDashboardController extends Controller
             })
             ->sum('total_price');
 
-        // Showtimes With Bookings Today - số suất chiếu hôm nay có ít nhất 1 booking
+        // Showtimes With Bookings Today - number of showtimes today with at least 1 booking
         $showtimesWithBookingsToday = Showtime::whereDate('show_date', $today)
             ->whereHas('showtimeSeats', function ($query) {
                 $query->where('status', 'booked');
@@ -67,8 +67,8 @@ class AdminDashboardController extends Controller
         // ROW 2: RISK & FUTURE
         // ========================================
 
-        // Revenue at Risk (24h) - doanh thu từ các suất chiếu CHƯA bắt đầu trong 24h tới
-        // Có thể bị refund nếu khách hủy vé hoặc showtime bị hủy
+        // Revenue at Risk (24h) - revenue from showtimes NOT YET started in next 24h
+        // May be refunded if customer cancels ticket or showtime is cancelled
         $next24h = $now->copy()->addHours(24);
         $upcomingRevenue24h = Booking::where('payment_status', 'paid')
             ->where('status', '!=', 'cancelled')
@@ -84,7 +84,7 @@ class AdminDashboardController extends Controller
         $refundAmountThisMonth = Booking::whereYear('updated_at', $today->year)
             ->whereMonth('updated_at', $today->month)
             ->where('status', 'cancelled')
-            ->where('payment_status', 'paid') // Chỉ tính những booking đã paid rồi bị cancel
+            ->where('payment_status', 'paid') // Only count bookings that were paid then cancelled
             ->sum('total_price');
 
         // ========================================

@@ -9,6 +9,13 @@ use App\Models\Showtime;
 use App\Mail\ShowtimeReminderMail;
 use Carbon\Carbon;
 
+/**
+ * SendShowtimeReminders Command
+ *
+ * Artisan command to send reminder emails before showtimes.
+ * Notifies customers about their upcoming movie screenings.
+ * Usage: php artisan email:showtime-reminders --hours=2
+ */
 class SendShowtimeReminders extends Command
 {
     /**

@@ -1,5 +1,14 @@
 <?php
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| This file contains all web routes for the CineBook cinema booking system.
+| Routes are organized by feature: movies, auth, booking, payment, admin.
+|
+*/
 
 use App\Http\Controllers\SearchController;
 

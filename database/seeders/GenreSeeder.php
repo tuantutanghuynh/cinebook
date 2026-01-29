@@ -5,6 +5,12 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * GenreSeeder
+ *
+ * Seeds the genres table with movie categories.
+ * Includes: Action, Comedy, Drama, Horror, Romance, etc.
+ */
 class GenreSeeder extends Seeder
 {
     /**

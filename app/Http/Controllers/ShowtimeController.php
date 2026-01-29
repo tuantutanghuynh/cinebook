@@ -29,10 +29,10 @@ class ShowtimeController extends Controller
         $showtimes = Showtime::with(['room', 'room.screenType'])
             ->where('movie_id', $id)
             ->where(function($query) use ($now) {
-                // Chỉ lấy suất chiếu trong tương lai
+                // Only get future showtimes
                 $query->where('show_date', '>', $now->toDateString())
                       ->orWhere(function($q) use ($now) {
-                          // Hoặc trong cùng ngày hôm nay nhưng giờ chiếu chưa qua
+                          // Or same day but show time has not passed yet
                           $q->where('show_date', '=', $now->toDateString())
                             ->where('show_time', '>', $now->toTimeString());
                       });

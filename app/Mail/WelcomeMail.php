@@ -9,6 +9,12 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\User;
 
+/**
+ * WelcomeMail
+ *
+ * Welcome email sent to new users after registration.
+ * Introduces the cinema platform and its features.
+ */
 class WelcomeMail extends Mailable
 {
     use Queueable, SerializesModels;

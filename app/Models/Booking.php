@@ -5,6 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Booking Model
+ *
+ * Represents a customer's ticket booking.
+ * Tracks booking status (pending, confirmed, cancelled, expired)
+ * and payment status (pending, paid).
+ */
 class Booking extends Model
 {
     use HasFactory;

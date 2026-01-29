@@ -9,6 +9,12 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Booking;
 
+/**
+ * ShowtimeReminderMail
+ *
+ * Email reminder sent before a showtime begins.
+ * Notifies customers about their upcoming movie screening.
+ */
 class ShowtimeReminderMail extends Mailable
 {
     use Queueable, SerializesModels;

@@ -6,6 +6,12 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * AuthRedirect Middleware
+ *
+ * Ensures user is authenticated before accessing protected routes.
+ * Stores intended URL for redirect after login.
+ */
 class AuthRedirect
 {
     /**

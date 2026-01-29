@@ -9,6 +9,12 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Booking;
 
+/**
+ * BookingCancellationMail
+ *
+ * Email sent to customers when their booking is cancelled.
+ * Contains cancellation reason and refund information if applicable.
+ */
 class BookingCancellationMail extends Mailable
 {
     use Queueable, SerializesModels;

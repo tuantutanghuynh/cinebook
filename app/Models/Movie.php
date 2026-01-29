@@ -5,6 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Movie Model
+ *
+ * Represents a movie in the cinema system.
+ * Manages movie details, genres, reviews, and status.
+ * Supports statuses: now_showing, coming_soon, ended.
+ */
 class Movie extends Model
 {
     use HasFactory;

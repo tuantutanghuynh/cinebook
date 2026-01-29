@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * ShowtimePrice Model
+ *
+ * Represents pricing for a specific seat type at a showtime.
+ * Allows custom pricing per showtime (peak hours, special events).
+ */
 class ShowtimePrice extends Model
 {
     use HasFactory;

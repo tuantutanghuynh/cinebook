@@ -1,9 +1,16 @@
 <?php
-// database/seeders/SeatSeeder.php
+
+namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Seat;
 
+/**
+ * SeatSeeder
+ *
+ * Seeds seats for cinema rooms.
+ * Creates seat layout with different types: Standard, VIP, Couple.
+ */
 class SeatSeeder extends Seeder
 {
     public function run()

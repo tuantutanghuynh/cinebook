@@ -4,6 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Promotion Model
+ *
+ * Represents a promotional offer or deal.
+ * Contains promotion details, validity, and display settings.
+ * Grouped by categories for organized display.
+ */
 class Promotion extends Model
 {
     protected $fillable = [
