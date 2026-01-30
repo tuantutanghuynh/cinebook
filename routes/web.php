@@ -166,6 +166,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 
     // Showtimes Management
     Route::resource('showtimes', AdminShowtimeController::class, ['as' => 'admin']);
+    Route::post('showtimes/{showtime}/cancel-showtime', [AdminShowtimeController::class, 'cancelShowtime'])->name('admin.showtimes.cancel');
 
     // Bookings Management
     Route::get('bookings', [AdminBookingController::class, 'index'])->name('admin.bookings.index');

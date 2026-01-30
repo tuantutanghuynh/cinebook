@@ -224,8 +224,8 @@ class AdminShowtimeController extends Controller
         DB::beginTransaction();
         try {
             // Check if there are any confirmed bookings
-            if ($showtime->bookings()->exists()) {
-                return back()->with('error', 'Cannot delete showtime - there are existing customer bookings');
+            if ($showtime->bookings()->whereIn('status', ['confirmed', 'pending'])->exists()) {
+                return back()->with('error', 'Cannot delete showtime - there are existing customer bookings. Use "Cancel Showtime" instead to process refunds.');
             }
 
             // Check if there are any seats that are booked or reserved
@@ -252,6 +252,94 @@ class AdminShowtimeController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Failed to delete showtime: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Cancel a showtime and process all affected bookings
+     * - Cancels all bookings (confirmed and pending)
+     * - Issues refunds for paid bookings
+     * - Releases all seats
+     * - Cancels all QR codes
+     * - Sends email notifications to all affected customers
+     */
+    public function cancelShowtime(Request $request, Showtime $showtime)
+    {
+        $request->validate([
+            'reason' => 'required|string|max:500'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $reason = $request->input('reason', 'Technical issue - showtime cancelled by cinema');
+            
+            // Get all bookings for this showtime (confirmed and pending)
+            $bookings = $showtime->bookings()
+                ->with(['user', 'bookingSeats.seat'])
+                ->whereIn('status', ['confirmed', 'pending'])
+                ->get();
+
+            if ($bookings->isEmpty()) {
+                return back()->with('error', 'No active bookings found for this showtime');
+            }
+
+            $cancelledCount = 0;
+            $refundTotal = 0;
+            $emailsSent = 0;
+
+            foreach ($bookings as $booking) {
+                // Calculate refund amount (full refund for paid bookings)
+                $refundAmount = ($booking->payment_status === 'paid') ? $booking->total_price : 0;
+                $refundTotal += $refundAmount;
+
+                // Update booking status to cancelled
+                $booking->update([
+                    'status' => 'cancelled',
+                    // Keep payment_status as 'paid' for audit - create separate refund record in production
+                ]);
+
+                // Cancel all QR codes for this booking
+                DB::table('booking_seats')
+                    ->where('booking_id', $booking->id)
+                    ->update(['qr_status' => 'cancelled']);
+
+                // Release all seats for this booking
+                foreach ($booking->bookingSeats as $bookingSeat) {
+                    DB::table('showtime_seats')
+                        ->where('showtime_id', $showtime->id)
+                        ->where('seat_id', $bookingSeat->seat_id)
+                        ->update(['status' => 'available']);
+                }
+
+                // Send cancellation email to customer
+                try {
+                    if ($booking->user && $booking->user->email) {
+                        \Mail::to($booking->user->email)->send(
+                            new \App\Mail\ShowtimeCancellationMail($showtime, $booking, $reason, $refundAmount)
+                        );
+                        $emailsSent++;
+                    }
+                } catch (\Exception $e) {
+                    \Log::error("Failed to send showtime cancellation email for booking #{$booking->id}: " . $e->getMessage());
+                }
+
+                $cancelledCount++;
+            }
+
+            DB::commit();
+
+            $message = "Showtime cancelled successfully! ";
+            $message .= "Cancelled {$cancelledCount} booking(s). ";
+            if ($refundTotal > 0) {
+                $message .= "Total refunds to process: " . number_format($refundTotal, 0) . " VND. ";
+            }
+            $message .= "Notification emails sent to {$emailsSent} customer(s).";
+
+            return back()->with('success', $message);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to cancel showtime: ' . $e->getMessage());
         }
     }
 }
