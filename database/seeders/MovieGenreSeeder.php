@@ -5,6 +5,12 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * MovieGenreSeeder
+ *
+ * Seeds the movie_genres pivot table.
+ * Links movies to their respective genres.
+ */
 class MovieGenreSeeder extends Seeder
 {
     /**

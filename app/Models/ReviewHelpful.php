@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * ReviewHelpful Model
+ *
+ * Represents a user's helpful vote on a review.
+ * Users can mark reviews as helpful (one vote per user per review).
+ */
 class ReviewHelpful extends Model
 {
     use HasFactory;

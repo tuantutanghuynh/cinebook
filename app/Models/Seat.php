@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Seat Model
+ *
+ * Represents a physical seat in a cinema room.
+ * Contains seat position (row, number, code) and type information.
+ */
 class Seat extends Model
 {
     use HasFactory;

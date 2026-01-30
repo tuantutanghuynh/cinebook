@@ -10,6 +10,12 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Booking;
 
+/**
+ * BookingConfirmationMail
+ *
+ * Email sent to customers after successful booking and payment.
+ * Contains booking details, QR codes, and showtime information.
+ */
 class BookingConfirmationMail extends Mailable
 {
     use Queueable, SerializesModels;

@@ -5,6 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Promotion;
 use Illuminate\Http\Request;
 
+/**
+ * PromotionController
+ *
+ * Handles promotion display operations including:
+ * - Listing all active promotions
+ * - Grouping promotions by category
+ * - Ordering promotions by display priority
+ */
 class PromotionController extends Controller
 {
     /**

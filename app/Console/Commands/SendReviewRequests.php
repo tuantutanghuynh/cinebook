@@ -9,6 +9,13 @@ use App\Models\Review;
 use App\Mail\ReviewRequestMail;
 use Carbon\Carbon;
 
+/**
+ * SendReviewRequests Command
+ *
+ * Artisan command to send review request emails to customers.
+ * Runs after showtimes end to request movie reviews.
+ * Usage: php artisan email:review-requests --hours=2
+ */
 class SendReviewRequests extends Command
 {
     /**

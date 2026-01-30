@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
+/**
+ * Showtime Model
+ *
+ * Represents a movie screening schedule.
+ * Manages show date/time, room assignment, and seat availability.
+ * Supports status: upcoming, ongoing, done.
+ */
 class Showtime extends Model
 {
     use HasFactory;

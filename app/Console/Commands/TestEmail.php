@@ -7,6 +7,13 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\WelcomeMail;
 use App\Models\User;
 
+/**
+ * TestEmail Command
+ *
+ * Artisan command to test email configuration.
+ * Sends a test welcome email to verify SMTP settings.
+ * Usage: php artisan email:test {email}
+ */
 class TestEmail extends Command
 {
     protected $signature = 'email:test {email}';

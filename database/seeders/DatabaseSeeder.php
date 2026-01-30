@@ -6,6 +6,12 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+/**
+ * DatabaseSeeder
+ *
+ * Main seeder that orchestrates all other seeders.
+ * Runs seeders in logical order for database initialization.
+ */
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
