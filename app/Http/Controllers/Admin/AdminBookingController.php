@@ -127,6 +127,11 @@ class AdminBookingController extends Controller
             // Update booking status
             $booking->update(['status' => 'cancelled']);
 
+            // Cancel all QR codes for this booking
+            DB::table('booking_seats')
+                ->where('booking_id', $booking->id)
+                ->update(['qr_status' => 'cancelled']);
+
             // Release seats
             foreach ($booking->bookingSeats as $bookingSeat) {
                 DB::table('showtime_seats')

@@ -9,6 +9,9 @@ class BookingSeat extends Model
 {
     use HasFactory;
 
+    // Disable timestamps - table doesn't have created_at/updated_at columns
+    public $timestamps = false;
+
     protected $fillable = ['booking_id', 'showtime_id', 'seat_id', 'price', 'qr_code', 'qr_status', 'checked_at'];
 
     protected $casts = [
@@ -48,6 +51,32 @@ class BookingSeat extends Model
      */
     public static function checkInWithQR($qrCode)
     {
+        // First, check if QR code exists
+        $existingSeats = self::where('qr_code', $qrCode)->first();
+        
+        if (!$existingSeats) {
+            return [
+                'success' => false,
+                'message' => 'QR code is invalid'
+            ];
+        }
+
+        // Check QR status
+        if ($existingSeats->qr_status === 'cancelled') {
+            return [
+                'success' => false,
+                'message' => 'This booking has been cancelled. QR code is no longer valid'
+            ];
+        }
+
+        if ($existingSeats->qr_status === 'checked') {
+            return [
+                'success' => false,
+                'message' => 'QR code has already been used for check-in'
+            ];
+        }
+
+        // Get all seats with active status
         $seats = self::where('qr_code', $qrCode)
             ->where('qr_status', 'active')
             ->get();
@@ -55,7 +84,7 @@ class BookingSeat extends Model
         if ($seats->isEmpty()) {
             return [
                 'success' => false,
-                'message' => 'QR code is invalid or already used'
+                'message' => 'QR code is not active'
             ];
         }
 
