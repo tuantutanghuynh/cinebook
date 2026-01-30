@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * ProfileController
@@ -80,10 +81,19 @@ class ProfileController extends Controller
         $user->name = trim($validated['name']);
         $user->phone = $validated['phone'] ? trim($validated['phone']) : null;
         $user->city = $validated['city'] ? trim($validated['city']) : null;
+        
+        // Handle avatar upload
         if ($request->hasFile('avatar')) {
+            // Delete old avatar if exists
+            if ($user->avatar_url && \Storage::disk('public')->exists($user->avatar_url)) {
+                \Storage::disk('public')->delete($user->avatar_url);
+            }
+            
+            // Store new avatar
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
             $user->avatar_url = $avatarPath;
         }
+        
         $user->save();
                 
         return redirect()->route('user.profile')->with('success', 'Profile updated successfully');
