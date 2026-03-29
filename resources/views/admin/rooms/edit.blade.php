@@ -71,7 +71,16 @@
     <!-- Seat Map Section -->
     <div class="seat-map-section">
         <h4><i class="bi bi-grid-3x3 me-2"></i>Seat Map Configuration</h4>
+
+        @if($hasFutureShowtimes)
+        <div class="alert alert-warning" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <strong>Không thể chỉnh sửa loại ghế!</strong> Phòng này đang có suất chiếu trong tương lai.
+            Vui lòng hủy tất cả suất chiếu trước khi thay đổi cấu hình ghế.
+        </div>
+        @else
         <p class="section-subtitle">Click on seats to select them, then choose a seat type from the sidebar. You can select multiple seats at once.</p>
+        @endif
 
         <!-- Legend -->
         <div class="seat-legend">
@@ -161,10 +170,10 @@
             </div>
 
             <div class="mt-4 d-flex gap-3">
-                <button type="submit" class="btn btn-success btn-lg">
+                <button type="submit" class="btn btn-success btn-lg" {{ $hasFutureShowtimes ? 'disabled' : '' }}>
                     <i class="bi bi-save me-2"></i>Save All Changes
                 </button>
-                <button type="button" class="btn btn-outline-primary" id="openSidebarBtn">
+                <button type="button" class="btn btn-outline-primary" id="openSidebarBtn" {{ $hasFutureShowtimes ? 'disabled' : '' }}>
                     <i class="bi bi-pencil me-2"></i>Edit Selected Seats
                 </button>
             </div>
@@ -239,6 +248,10 @@
 @endsection
 
 @push('scripts')
+<script>
+    // Biến kiểm tra có suất chiếu tương lai hay không
+    window.hasFutureShowtimes = {{ $hasFutureShowtimes ? 'true' : 'false' }};
+</script>
 <script src="{{ asset('js/admin-room-edit.js') }}"></script>
 <script>
 // Pass dynamic data to the JavaScript file

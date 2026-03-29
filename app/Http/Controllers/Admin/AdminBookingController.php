@@ -22,9 +22,57 @@ use Carbon\Carbon;
  */
 class AdminBookingController extends Controller
 {
+    /**
+     * Auto-expire pending bookings older than 2 minutes
+     * These are bookings where user started payment but never completed
+     */
+    private function expirePendingBookings()
+    {
+        $expiredBookings = Booking::where('status', 'pending')
+            ->where('created_at', '<', Carbon::now()->subMinutes(2))
+            ->with('bookingSeats')
+            ->get();
+
+        \Log::info('expirePendingBookings: Found ' . $expiredBookings->count() . ' pending bookings to expire');
+
+        foreach ($expiredBookings as $booking) {
+            \Log::info('Expiring booking #' . $booking->id);
+            DB::beginTransaction();
+            try {
+                // Update booking status to expired
+                $booking->update(['status' => 'expired']);
+                \Log::info('Booking #' . $booking->id . ' status updated to expired');
+
+                // Release any reserved seats (should already be released, but just in case)
+                DB::table('showtime_seats')
+                    ->where('showtime_id', $booking->showtime_id)
+                    ->whereIn('seat_id', $booking->bookingSeats->pluck('seat_id'))
+                    ->where('status', 'reserved')
+                    ->update([
+                        'status' => 'available',
+                        'reserved_until' => null,
+                        'reserved_by_user_id' => null,
+                    ]);
+
+                // Update QR status to expired
+                DB::table('booking_seats')
+                    ->where('booking_id', $booking->id)
+                    ->update(['qr_status' => 'expired']);
+
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                \Log::error('Failed to expire booking #' . $booking->id . ': ' . $e->getMessage());
+            }
+        }
+    }
+
     // Booking List Page
     public function index(Request $request)
     {
+        // Auto-cleanup: expire pending bookings older than 2 minutes
+        $this->expirePendingBookings();
+
         $query = Booking::with(['user', 'showtime.movie', 'showtime.room', 'bookingSeats.seat']);
 
         // Filter by status
@@ -126,8 +174,12 @@ class AdminBookingController extends Controller
             // TODO: Integrate Momo/VNPay refund API in production
             $refundAmount = $booking->payment_status === 'paid' ? $booking->total_price : 0;
 
-            // Update booking status
-            $booking->update(['status' => 'cancelled']);
+            // Update booking status and payment status
+            $updateData = ['status' => 'cancelled'];
+            if ($booking->payment_status === 'paid') {
+                $updateData['payment_status'] = 'refunded';
+            }
+            $booking->update($updateData);
 
             // Cancel all QR codes for this booking
             DB::table('booking_seats')

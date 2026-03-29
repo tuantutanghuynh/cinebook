@@ -80,11 +80,11 @@ class AdminDashboardController extends Controller
             })
             ->sum('total_price');
 
-        // Refund Amount This Month - cancelled bookings that were previously paid
+        // Refund Amount This Month - cancelled bookings that were refunded
         $refundAmountThisMonth = Booking::whereYear('updated_at', $today->year)
             ->whereMonth('updated_at', $today->month)
             ->where('status', 'cancelled')
-            ->where('payment_status', 'paid') // Only count bookings that were paid then cancelled
+            ->where('payment_status', 'refunded')
             ->sum('total_price');
 
         // ========================================

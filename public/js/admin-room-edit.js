@@ -99,6 +99,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function selectSeat(btn) {
+        // Không cho phép chọn ghế nếu có suất chiếu tương lai
+        if (window.hasFutureShowtimes) {
+            return;
+        }
+
         const seatId = btn.dataset.seatId;
         const seatId2 = btn.dataset.seatId2; // For couple seats
         const isCouple = btn.classList.contains('couple');

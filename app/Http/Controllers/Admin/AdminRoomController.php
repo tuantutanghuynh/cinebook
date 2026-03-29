@@ -7,6 +7,7 @@ use App\Models\Room;
 use App\Models\ScreenType;
 use App\Models\SeatType;
 use App\Models\Seat;
+use App\Models\Showtime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -112,7 +113,12 @@ class AdminRoomController extends Controller
             ->groupBy('seat_row')
             ->sortKeys(); // Sort rows alphabetically (A, B, C, ...)
 
-        return view('admin.rooms.edit', compact('room', 'screenTypes', 'seatTypes', 'seatsByRow'));
+        // Kiểm tra room có suất chiếu trong tương lai không
+        $hasFutureShowtimes = Showtime::where('room_id', $room->id)
+            ->where('show_date', '>=', now()->toDateString())
+            ->exists();
+
+        return view('admin.rooms.edit', compact('room', 'screenTypes', 'seatTypes', 'seatsByRow', 'hasFutureShowtimes'));
     }
 
     public function update(Request $request, Room $room)
@@ -130,6 +136,15 @@ class AdminRoomController extends Controller
 
     public function updateSeats(Request $request, Room $room)
     {
+        // Kiểm tra room có suất chiếu trong tương lai không
+        $hasFutureShowtimes = Showtime::where('room_id', $room->id)
+            ->where('show_date', '>=', now()->toDateString())
+            ->exists();
+
+        if ($hasFutureShowtimes) {
+            return back()->with('error', 'Không thể thay đổi loại ghế vì phòng đang có suất chiếu trong tương lai.');
+        }
+
         $validated = $request->validate([
             'seats' => 'required|array',
             'seats.*.seat_id' => 'required|exists:seats,id',

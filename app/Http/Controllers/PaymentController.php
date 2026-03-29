@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Showtime;
 use App\Models\Seat;
 use App\Models\Booking;
+use App\Models\ShowtimePrice;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BookingConfirmationMail;
 use Illuminate\Support\Facades\Log;
@@ -108,7 +109,12 @@ class PaymentController extends Controller
             
             //d. Get showtime with room and screen type for pricing
             $showtime = Showtime::with(['room.screenType'])->find($showtime_id);
-            
+
+            // Get peak hour surcharges for this showtime (indexed by seat_type_id)
+            $peakSurcharges = ShowtimePrice::where('showtime_id', $showtime_id)
+                ->pluck('price', 'seat_type_id')
+                ->toArray();
+
             //e. Insert into booking_seats table with pricing and QR code for each seat
             $coupleSeatsProcessed = []; // Track couple seats to avoid duplicate QR
             
@@ -117,7 +123,9 @@ class PaymentController extends Controller
                 $seat = Seat::with('seatType')->find($seat_id);
                 
                 if ($seat && $showtime && $showtime->room && $showtime->room->screenType) {
-                    $seatPrice = ($seat->seatType->base_price ?? 0) + ($showtime->room->screenType->price ?? 0);
+                    // Calculate seat price: base + screen type + peak hour surcharge
+                    $peakSurcharge = $peakSurcharges[$seat->seat_type_id] ?? 0;
+                    $seatPrice = ($seat->seatType->base_price ?? 0) + ($showtime->room->screenType->price ?? 0) + $peakSurcharge;
                     
                     // Check if this is a couple seat
                     $isCouple = ($seat->seatType->name === 'Couple' || $seat->seat_type_id == 3);

@@ -10,6 +10,7 @@ use App\Models\Showtime;
 use App\Models\Room;
 use App\Models\Seat;
 use App\Models\Booking;
+use App\Models\ShowtimePrice;
 
 /**
  * BookingController
@@ -54,6 +55,25 @@ class BookingController extends Controller
                 'reserved_until' => null,
                 'reserved_by_user_id' => null,
             ]);
+
+        // Auto-expire pending bookings older than 2 minutes
+        $expiredBookings = Booking::where('status', 'pending')
+            ->where('created_at', '<', now()->subMinutes(2))
+            ->with('bookingSeats')
+            ->get();
+
+        foreach ($expiredBookings as $booking) {
+            try {
+                $booking->update(['status' => 'expired']);
+
+                // Update QR status to expired
+                DB::table('booking_seats')
+                    ->where('booking_id', $booking->id)
+                    ->update(['qr_status' => 'expired']);
+            } catch (\Exception $e) {
+                \Log::error('Failed to expire booking #' . $booking->id . ': ' . $e->getMessage());
+            }
+        }
         
         // Get booked seats (confirmed bookings only)
         $bookedSeats = DB::table('showtime_seats')
@@ -187,6 +207,11 @@ class BookingController extends Controller
             $seatDetails = [];
             $totalPrice = 0;
             $validatedCouplePairs = [];
+
+            // Get peak hour surcharges for this showtime (indexed by seat_type_id)
+            $peakSurcharges = ShowtimePrice::where('showtime_id', $showtime_id)
+                ->pluck('price', 'seat_type_id')
+                ->toArray();
             
             foreach ($selectedSeats as $seat_id) {
                 $seat = $lockedSeats->get($seat_id);
@@ -201,8 +226,9 @@ class BookingController extends Controller
                         return redirect()->route('booking.seatmap', ['showtime_id' => $showtime_id])
                             ->with('error', $validation['message']);
                     }
-                    // Logic to calculate price for couple seats
-                    $seatPrice = ($room->screenType->price ?? 0) + ($seat->seatType->base_price ?? 0);
+                    // Logic to calculate price for couple seats (base + screen type + peak hour surcharge)
+                    $peakSurcharge = $peakSurcharges[$seat->seat_type_id] ?? 0;
+                    $seatPrice = ($room->screenType->price ?? 0) + ($seat->seatType->base_price ?? 0) + $peakSurcharge;
                     $totalPrice += $seatPrice;
                     $seatDetails[] = [
                         'id' => $seat->id,
@@ -213,7 +239,9 @@ class BookingController extends Controller
                     $validatedCouplePairs[] = $pairKey;
                 }
             } else {
-                $seatPrice = ($room->screenType->price ?? 0) + ($seat->seatType->base_price ?? 0);
+                // Regular seat: base + screen type + peak hour surcharge
+                $peakSurcharge = $peakSurcharges[$seat->seat_type_id] ?? 0;
+                $seatPrice = ($room->screenType->price ?? 0) + ($seat->seatType->base_price ?? 0) + $peakSurcharge;
                 $totalPrice += $seatPrice;
                 $seatDetails[] = [
                     'id' => $seat->id,
