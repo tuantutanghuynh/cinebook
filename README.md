@@ -2,7 +2,7 @@
 
 ### FPT Aptech
 
-**Tech Stack**: Laravel 12, PHP 8.2, MySQL 8, Blade, JavaScript, CSS3
+**Tech Stack**: Laravel 12, PHP 8.2, MySQL 8, React 18, Vite, Axios, Laravel Sanctum
 
 ## 👥 Team Members
 
@@ -54,10 +54,29 @@ The following resources are included in the DOCUMENT folder:
 
 ## 🏗 Project Components
 
-- **Backend**: Laravel 12 (RESTful, MVC, Eloquent ORM)
-- **Frontend**: Blade templates with JavaScript and CSS3
-- **Database**: MySQL (schema and sample data stored in the `mySQL/` folder)
-- **QR Code System**: Generates and manages QR codes for each ticket  
+- **Backend**: Laravel 12 (RESTful API, MVC, Eloquent ORM, Laravel Sanctum)
+- **Frontend**: React 18 (SPA, React Router, Axios)
+- **Database**: MySQL (schema and sample data stored in the `DOCUMENT/` folder)
+- **QR Code System**: Generates and manages QR codes for each ticket
+
+## 📁 Monorepo Structure
+
+```
+cinebook/
+├── backend/        ← Laravel 12 API server (port 8000)
+│   ├── app/
+│   ├── routes/
+│   ├── resources/
+│   └── ...
+├── frontend/       ← React 18 SPA (port 5173)
+│   ├── src/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   ├── services/
+│   │   └── hooks/
+│   └── ...
+└── guidance/       ← Learning documentation
+```
 
 ## 🚀 Installation & Usage Guide
 
@@ -151,9 +170,61 @@ You can refer to additional documentation files inside the repository for more i
 
 ### Frontend
 
-- **Blade Templates** as the main templating engine
-- **JavaScript** for interactive features such as seat selection, countdown timers, and dynamic UI
-- **CSS3** for layout, styling, and visual effects  
+- **React 18** as the main UI framework (SPA)
+- **React Router v6** for client-side routing
+- **Axios** for HTTP communication with the Laravel API
+- **Laravel Sanctum** for token-based authentication
+- **Vite** for fast development and build tooling
+
+## 🗺 Frontend Roadmap (React Migration)
+
+Dự án đang trong quá trình chuyển từ Blade sang React SPA. Dưới đây là tiến độ và kế hoạch:
+
+### Đã hoàn thành
+- [x] Tách monorepo: `backend/` (Laravel) + `frontend/` (React)
+- [x] Cài đặt Laravel Sanctum (token-based auth)
+- [x] Cấu hình CORS cho React ↔ Laravel
+- [x] Tạo API endpoint: `GET /api/movies`
+- [x] React app khởi tạo với Vite + React Router
+- [x] Axios instance với base config
+- [x] `HomePage` — hiển thị danh sách phim từ API
+- [x] `LoginPage` — đăng nhập, lưu token vào localStorage
+- [x] API endpoint: `POST /api/login`, `POST /api/logout`
+
+### Đang làm
+- [ ] Axios interceptor — tự động đính token vào mọi request
+- [ ] Layout chung (Header + Footer)
+- [ ] Protected Route — bảo vệ trang cần đăng nhập
+
+### Kế hoạch tiếp theo
+
+#### Phase 2 — Core Pages
+- [ ] `MovieDetailPage` — chi tiết phim + reviews
+- [ ] `NowShowingPage` — phim đang chiếu + filter
+- [ ] `UpcomingPage` — phim sắp chiếu + filter
+- [ ] `RegisterPage` — đăng ký tài khoản
+
+#### Phase 3 — Booking Flow
+- [ ] `ShowtimesPage` — chọn suất chiếu
+- [ ] `SeatMapPage` — chọn ghế (interactive grid)
+- [ ] `BookingConfirmPage` — xác nhận đặt vé
+- [ ] Countdown timer (10 phút)
+- [ ] `PaymentPage` — mock payment gateway
+- [ ] `BookingSuccessPage` — hiển thị QR code
+
+#### Phase 4 — User Profile
+- [ ] `ProfilePage` — thông tin cá nhân
+- [ ] `BookingHistoryPage` — lịch sử đặt vé
+- [ ] `ReviewsPage` — đánh giá của tôi
+- [ ] Đổi mật khẩu
+
+#### Phase 5 — Admin Panel
+- [ ] `AdminDashboard` — thống kê doanh thu
+- [ ] Quản lý phim (CRUD)
+- [ ] Quản lý suất chiếu
+- [ ] Quản lý phòng chiếu + sơ đồ ghế
+- [ ] QR Check-in scanner
+- [ ] Phân quyền Admin Route
 
 ## 🐛 Troubleshooting
 
