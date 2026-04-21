@@ -141,9 +141,9 @@ The project is being migrated from Blade templates to a React SPA. Below is the 
 
 ### In Progress
 
-- [ ] Axios interceptor — automatically attach token to every request
-- [ ] Shared layout (Header + Footer)
-- [ ] Protected Route — guard pages that require authentication
+- [x] Axios interceptor — automatically attach token to every request
+- [x] Shared layout (Header + Footer)
+- [x] Protected Route — guard pages that require authentication
 
 ### Phase 2 — Core Pages
 
