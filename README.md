@@ -21,6 +21,26 @@
 
 The system also provides a dedicated **Admin Panel** to manage the entire cinema operation, including movies, screening rooms, showtimes, tickets, and users.
 
+## Screenshots
+
+### Homepage
+![Homepage](photo/screencapture-127-0-0-1-8000-2026-01-17-11_41_37.png)
+
+### Now Showing
+![Now Showing](photo/screencapture-127-0-0-1-8000-now-showing-2026-01-17-11_41_52.png)
+
+### Movie Detail
+![Movie Detail](photo/screencapture-127-0-0-1-8000-movies-1-2026-01-17-11_42_59.png)
+
+### Seat Selection
+![Seat Map](photo/screencapture-127-0-0-1-8000-showtimes-2-seats-2026-01-17-11_43_31.png)
+
+### Booking Confirmation
+![Booking](photo/screencapture-127-0-0-1-8000-showtimes-2-book-2026-01-17-11_43_49.png)
+
+### Admin Dashboard
+![Admin](photo/screencapture-127-0-0-1-8000-admin-2026-01-17-11_44_25.png)
+
 ## Documentation
 
 The following resources are included in the DOCUMENT folder:
